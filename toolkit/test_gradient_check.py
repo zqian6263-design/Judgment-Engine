@@ -27,3 +27,10 @@ def test_assertion_fires_on_bad_gradient():
     g = numerical_gradient(lambda t: np.sum(t**2), x)
     with pytest.raises(AssertionError):
         assert_gradients_close(g, np.array([0.0, 0.0]))
+
+
+def test_passes_at_near_zero_gradient():
+    # 真实梯度≈0 时，中心差分截断误差≈1e-10，相对误差会超过 tol，
+    # 但绝对误差远小于 1e-8，应通过（绝对误差逃生条款）
+    g = numerical_gradient(lambda t: np.sum(t**3), np.array([0.0]))
+    assert_gradients_close(g, np.array([0.0]))
